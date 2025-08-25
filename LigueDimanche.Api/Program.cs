@@ -1,41 +1,96 @@
+using LigueDimanche.Core.Interfaces;
+using LigueDimanche.Infra;
+using LigueDimanche.Infra.Repositories;
+using LigueDimanche.Infra.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+
+// Configuration Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "LigueDimanche API",
+        Version = "v1",
+        Description = "API de gestion de la Ligue du Dimanche",
+        Contact = new OpenApiContact
+        {
+            Name = "OUEL99",
+            Email = "contact@example.com",
+            Url = new Uri("https://github.com/OUEL99/LigueDimanche")
+        }
+    });
+
+    // Inclure les commentaires XML pour la documentation
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+
+    // Configuration pour les DTOs
+    c.SchemaFilter<ExampleSchemaFilter>();
+});
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Injection des repositories
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Injection des services métier
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LigueDimanche API V1");
+        c.RoutePrefix = string.Empty; // Swagger UI à la racine (/)
+        c.DisplayRequestDuration();
+        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
+    });
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+// Classe pour personnaliser les exemples dans Swagger
+public class ExampleSchemaFilter : Swashbuckle.AspNetCore.SwaggerGen.ISchemaFilter
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public void Apply(Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context)
+    {
+        if (context.Type == typeof(LigueDimanche.Core.DTO.Users.CreateUserRequestDto))
+        {
+            schema.Example = new Microsoft.OpenApi.Any.OpenApiObject
+            {
+                ["email"] = new Microsoft.OpenApi.Any.OpenApiString("john.doe@example.com"),
+                ["nom"] = new Microsoft.OpenApi.Any.OpenApiString("Doe"),
+                ["prenom"] = new Microsoft.OpenApi.Any.OpenApiString("John"),
+                ["motDePasse"] = new Microsoft.OpenApi.Any.OpenApiString("motdepassesecret123"),
+                ["dateDeNaissance"] = new Microsoft.OpenApi.Any.OpenApiString("1995-06-15"),
+                ["telephone"] = new Microsoft.OpenApi.Any.OpenApiString("0123456789"),
+                ["estAdmin"] = new Microsoft.OpenApi.Any.OpenApiBoolean(false),
+                ["positions"] = new Microsoft.OpenApi.Any.OpenApiArray
+                {
+                    new Microsoft.OpenApi.Any.OpenApiString("Attaquant"),
+                    new Microsoft.OpenApi.Any.OpenApiString("Defenseur")
+                }
+            };
+        }
+    }
 }
