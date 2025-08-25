@@ -1,0 +1,68 @@
+# Build results
+bin/
+obj/
+out/
+artifacts/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pdb
+*.cachefile
+*.ncb
+*.aps
+*.vspscc
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlh
+*.tli
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+
+# Visual Studio Code
+.vscode/
+
+# Test results
+TestResult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Entity Framework
+# (on garde les fichiers de migrations car ils font partie du code source)
+# migrations/**/Snapshot.cs (facultatif si tu veux les ignorer)
+*.db
+
+# Logs
+*.log
+
+# Secrets
+appsettings.Development.json
+appsettings.Local.json
+
+# OS files
+.DS_Store
+Thumbs.db
