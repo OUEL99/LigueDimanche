@@ -10,7 +10,7 @@ namespace LigueDimanche.Core.Interfaces
     public interface IAuthService
     {
         Task<LoginResponseDto> LoginAsync(LoginRequestDto loginRequestDto);
-        Task<bool> ValidateTokenAsync(string token);
+        bool ValidateToken(string token);
         string GenerateToken(int userId, string email, bool isAdmin);
     }
 }

@@ -50,9 +50,9 @@ namespace LigueDimanche.Api.Controllers
         [HttpPost("validate-token")]
         [ProducesResponseType(typeof(bool), 200)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<bool>> ValidateToken([FromBody] string token)
+        public ActionResult<bool> ValidateToken([FromBody] string token)
         {
-            var isValid = await _authService.ValidateTokenAsync(token);
+            var isValid = _authService.ValidateToken(token);
             if (!isValid)
                 return Unauthorized(new { message = "Token invalide ou expiré" });
             return Ok(true);

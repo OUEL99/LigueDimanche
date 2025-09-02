@@ -43,9 +43,9 @@ namespace LigueDimanche.Infra.Services
             }
 
             // Validation métier
-            if (request.DateDeNaissance > DateTime.Now.AddYears(-16))
+            if (request.DateDeNaissance > DateTime.Now.AddYears(-15))
             {
-                throw new InvalidOperationException("L'utilisateur doit avoir au moins 16 ans");
+                throw new InvalidOperationException("L'utilisateur doit avoir au moins 15 ans");
             }
 
             // Hashage du mot de passe

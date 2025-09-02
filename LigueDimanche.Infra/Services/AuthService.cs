@@ -28,7 +28,7 @@ namespace LigueDimanche.Infra.Services
         {
             //Récupérer le user
             var user = await _userRepository.GetByEmailAsync(request.Email);
-            if (user == null || !VerifyPassword(request.Email, user.MotDePasse))
+            if (user == null || !VerifyPassword(request.MotDePasse, user.MotDePasse))
             {
                 throw new UnauthorizedAccessException("Email ou mot de passe incorrect");
             }
@@ -89,11 +89,11 @@ namespace LigueDimanche.Infra.Services
             }
         }
 
-        public static bool VerifyPassword(string email, string hashedPassword)
+        public static bool VerifyPassword(string plainTextPassword, string hashedPassword)
         {
             using var sha256 = SHA256.Create();
-            var hashedInputPWD = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(hashedPassword)));
-            return hashedInputPWD == hashedPassword;
+            var hashedInputPassword = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(plainTextPassword)));
+            return hashedInputPassword == hashedPassword;
         }
     }
 }
