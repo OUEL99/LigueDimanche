@@ -57,5 +57,18 @@ namespace LigueDimanche.Api.Controllers
                 return Unauthorized(new { message = "Token invalide ou expiré" });
             return Ok(true);
         }
+
+        /// <summary>
+        /// Déconnexion de l'utilisateur (Retrait du token côté client)
+        /// </summary>
+        /// <returns>Confirmation de la déconnexion</returns>
+        /// <response code="200">Déconnexion réussie</response>
+        [HttpPost("logout")]
+        [ProducesResponseType(200)]
+        public ActionResult Logout()
+        {
+            // Ici, on suppose que le client supprime simplement le token localement.
+            return Ok(new { message = "Déconnexion réussie" });
+        }
     }
 }
