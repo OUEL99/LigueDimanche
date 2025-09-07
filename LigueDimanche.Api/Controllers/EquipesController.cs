@@ -32,5 +32,27 @@ namespace LigueDimanche.Api.Controllers
                 return NotFound(new { message = "Aucune équipe trouvée" });
             return Ok(equipes);
         }
+
+        /// <summary>
+        /// Récupérer une équipe par son ID
+        /// </summary>
+        /// <param name="idEquipe">ID de l'équipe recherchée</param>
+        /// <response code="200">Équipe récupérée avec succès</response>
+        /// <response code="404">Équipe non trouvée</response>
+        /// <response code="500">Erreur serveur</response>
+        [HttpGet("{idEquipe}")]
+        [ProducesResponseType(typeof(EquipeResponseDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<EquipeResponseDto>> GetEquipeById(int idEquipe)
+        {
+            var equipe = await _equipeService.GetEquipeByIdAsync(idEquipe);
+            if (equipe == null)
+                return NotFound(new { message = $"Équipe avec l'ID {idEquipe} introuvable" });
+            return Ok(equipe);
+        }
+
+        /// <summary>
+        /// Récupérer les 
     }
 }

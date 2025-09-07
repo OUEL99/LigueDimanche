@@ -9,6 +9,7 @@ namespace LigueDimanche.Core.Interfaces
     public interface IEquipeRepository
     {
         Task<IEnumerable<Entities.Equipe>> GetAllEquipesAsync();
+        Task<Entities.Equipe?> GetEquipeByIdAsync(int id);
 
     }
 }

@@ -38,5 +38,29 @@ namespace LigueDimanche.Infra.Services
                 }).ToList()
             });
         }
+
+        public async Task<EquipeResponseDto?> GetEquipeByIdAsync(int id)
+        {
+            var equipe = await _equipeRepository.GetEquipeByIdAsync(id);
+            if (equipe == null)
+                return null;
+            return new EquipeResponseDto
+            {
+                Id = equipe.Id,
+                Nom = equipe.Nom,
+                MatchId = equipe.Match.Id,
+                Joueurs = equipe.Membres.Select(m => new Core.DTO.Users.UserResponseDto
+                {
+                    Id = m.User.Id,
+                    Email = m.User.Email,
+                    Nom = m.User.Nom,
+                    Prenom = m.User.Prenom,
+                    DateDeNaissance = m.User.DateDeNaissance,
+                    Telephone = m.User.Telephone,
+                    EstAdmin = m.User.EstAdmin,
+                    Positions = m.User.Positions.Select(p => p.ToString()).ToList()
+                }).ToList()
+            };
+        }
     }
 }

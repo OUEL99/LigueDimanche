@@ -19,5 +19,14 @@ namespace LigueDimanche.Infra.Repositories
                     .ThenInclude(em => em.User)
                 .ToListAsync();
         }
+
+        public async Task<Equipe?> GetEquipeByIdAsync(int id)
+        {
+            return await _dbSet
+                .Include(e => e.Match)
+                .Include(e => e.Membres)
+                    .ThenInclude(em => em.User)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
     }
 }

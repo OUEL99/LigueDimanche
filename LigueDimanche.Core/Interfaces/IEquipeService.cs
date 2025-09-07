@@ -10,6 +10,6 @@ namespace LigueDimanche.Core.Interfaces
     public interface IEquipeService
     {
         Task<IEnumerable<EquipeResponseDto>> GetAllEquipesAsync();
-
+        Task<EquipeResponseDto?> GetEquipeByIdAsync(int id);
     }
 }

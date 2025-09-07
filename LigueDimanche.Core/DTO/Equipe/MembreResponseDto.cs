@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace LigueDimanche.Core.DTO.Equipe
 {
-    public class EquipeRequestDto
+    public class MembreResponseDto
     {
-        public string Nom { get; set; } = string.Empty;
-        public int? MatchId { get; set; }
+        public 
     }
 }
