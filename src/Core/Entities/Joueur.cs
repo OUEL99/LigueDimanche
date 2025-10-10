@@ -22,5 +22,6 @@ namespace Core.Entities
 
         public ICollection<JoueurEquipe> JoueurEquipes { get; set; } = [];
         public ICollection<JoueurSaison> JoueurSaisons { get; set; } = [];
+        public ICollection<JoueurPosition> JoueurPositions { get; set; } = [];
     }
 }
