@@ -1,15 +1,21 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Core.Interfaces;
 //using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.Services;
 //using Infrastructure.Repositories;
 //using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
@@ -42,15 +48,44 @@ builder.Services.AddSession(options =>
 builder.Services.AddDistributedTokenCaches();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services
-    .AddAuthentication(options =>
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+var jwtSettings = builder.Configuration.GetSection("JWT");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    })
-    .AddCookie(OpenIdConnectDefaults.AuthenticationScheme, options =>
-    {
-        options.AccessDeniedPath = "/Home/AccessDenied";
-    });
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+            jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey manquante"))),
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+})
+.AddCookie(OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.AccessDeniedPath = "/Home/AccessDenied";
+});
+
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+// Repositories
+builder.Services.AddScoped<IJoueurRepository, JoueurRepository>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+
+// Services
+builder.Services.AddScoped<IJoueurService, JoueurService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllersWithViews();
 

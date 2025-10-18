@@ -20,6 +20,13 @@ namespace Core.Entities
         public required string Telephone { get; set; }
         public required bool IsAdmin { get; set; }
 
+        public required string MotDePasseHash { get; set; } = string.Empty;
+        public DateTime? LastLogin { get; set; }
+
+        public required bool IsEmailVerified { get; set; } = false;
+        public string? EmailVerificationToken { get; set; }
+        public DateTime? EmailVerificationTokenExpiry { get; set; }
+
         public ICollection<JoueurEquipe> JoueurEquipes { get; set; } = [];
         public ICollection<JoueurSaison> JoueurSaisons { get; set; } = [];
         public ICollection<JoueurPosition> JoueurPositions { get; set; } = [];
