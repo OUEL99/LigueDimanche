@@ -86,6 +86,7 @@ builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IJoueurService, JoueurService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPositionService, PositionService>();
 
 builder.Services.AddControllersWithViews();
 
@@ -108,6 +109,7 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers(); // Pour les contrôleurs API
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{idDemande?}");

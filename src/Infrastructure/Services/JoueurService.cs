@@ -76,5 +76,23 @@ namespace Infrastructure.Services
 
             return joueur;
         }
+
+        public async Task VerifiyEmailAsync(string token)
+        {
+            var joueur = await _joueurRepository.GetJoueurByEmailVerificationToken(token) ?? throw new ArgumentException("Token de vérification invalide.");
+            if (joueur.IsEmailVerified)
+            {
+                throw new ArgumentException("L'email a déjà été vérifié.");
+            }
+            if (joueur.EmailVerificationTokenExpiry < DateTime.UtcNow)
+            {
+                throw new ArgumentException("Le token de vérification a expiré.");
+            }
+            joueur.IsEmailVerified = true;
+            joueur.EmailVerificationToken = null;
+            joueur.EmailVerificationTokenExpiry = null;
+            await _joueurRepository.UpdateAsync(joueur);
+            await _emailService.SendWelcomeEmailAsync(joueur.Email, joueur.Nom, joueur.Prenom);
+        }
     }
 }

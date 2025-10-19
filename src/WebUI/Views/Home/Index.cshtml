@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenue à la Ligue du Dimanche</h1>
+    <p>Rejoignez notre communauté de passionnés de hockey !</p>
+    <div class="mt-4">
+        <button asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg">Se connecter</button>
+        <button asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-lg">S'inscrire maintenant</button>
+    </div>
+</div>

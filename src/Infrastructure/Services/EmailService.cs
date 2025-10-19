@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         public async Task SendEmailVerificationAsync(string email, string nom, string prenom, string verificationToken)
         {
             var subject = "Vérifiez votre adresse email - Ligue Dimanche";
-            var verificationUrl = $"{_configuration["AppSettings:BaseUrl"]}/auth/verify-email?token={verificationToken}";
+            var verificationUrl = $"{_configuration["AppSettings:BaseUrl"]}/api/auth/verify-email?token={verificationToken}";
 
             var body = $@"
             <h2>Bonjour {prenom} {nom},</h2>
